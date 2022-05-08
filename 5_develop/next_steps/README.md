@@ -42,6 +42,10 @@ programmer, check out the blog post:
 The next module is *Deploy*. There, we will configure the package to 
 finally deploy it as an app on Mip Hub.
 
+⭐⭐⭐⭐⭐ If you think the content of the Mip Go program could benefit others, 
+please visit the page https://github.com/mipwise/mip-go and click on the 
+Star button in the top-right corner of the page.
+
 ### [Home][home] | [Back][back] | [Help][help]
 
 [home]: ../../README.md
