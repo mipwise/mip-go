@@ -51,14 +51,13 @@ After execution, you should see the `nutrition` table populated.
 
 ------------------------------------------------------------------------------
 
-With this, we have implemented the first version of our solution and tested 
-all the engines with a development instance. Later, we will implement unit 
-testing as well. But before that, we will get our package ready for 
-deployment on Mip Hub, so we can start to play with it on the internet browser.
+In the next section you will see how to compile an `execute_locally.py` that 
+will allow you to conveniently switch execution between engines and how to 
+execute engines from the commandline.
 
 ### [Home][home] | [Back][back] | [Next][next] | [Help][help]
 
 [home]: ../../README.md
 [back]: ../11_main_engine/README.md
-[next]: ../next_steps/README.md
+[next]: ../13_local_execution/README.md
 [help]: ../../0_help/README.md
