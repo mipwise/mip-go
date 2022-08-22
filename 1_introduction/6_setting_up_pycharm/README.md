@@ -84,7 +84,7 @@ and check the box for "Soft-wrap these files" with "*.md" included in the list.
 
 As an editor, you can change when and how text gets wrapped as you type it. 
 To do that, go to  
-`File > Settings > Editor > General > Code Style > Markdown`  
+`File > Settings > Editor > Code Style > Markdown`  
 and change the value of "Wrap on typing" to "Yes". You can also change the 
 value of "Hard wrap at" to, let's say 80 if you think that the default of 
 120 is too long.
