@@ -4,12 +4,14 @@ parameters of an app.
 
 ## Configuring `__init__.py`
 All you need to do to customize an app is to populate some Python 
-dictionaries in the `__init__.py` module. There are four dictionaries that you 
+dictionaries in the `__init__.py` module. There are a few dictionaries that you 
 can use:
 * `actions_config`: for action configurations
 * `parameters_config`: for parameters configurations
 * `input_tables_config`: for input tables configurations
 * `output_tables_config`: for output tables configurations
+* `input_pivot_tables_config`: for input pivot tables definition
+* `output_pivot_tables_config`: for output pivot tables definition
 
 Next, we show how to define each of these dictionaries so
 that Mip Hub can parse them.
@@ -47,8 +49,57 @@ names of the actions
 * You must not change the keys of the actions dictionaries, 
   Mip Hub will look for those exact keywords.
 
+
+### Parameters config
+Just like tables, parameters can also be hidden, categorized, and ordered. 
+In addition, parameters can have a tooltip, as actions have.
+
+Here is the template dictionary for parameters:
+```python
+parameters_config = {
+    'hidden': list(),
+    'categories': dict(),
+    'order': list(),
+    'tooltips': dict()
+    }
+```
+
+And here is how we can populate it for the `mip_me` package:
+```python
+parameters_config = {
+    'hidden': list(),
+    'categories': dict(),
+    'order': ['Food Portions', 'Food Cost Multiplier'],
+    'tooltips': {
+        'Food Portions': "Whether fractional portions may compose the diet or only whole portions must be used",
+        'Food Cost Multiplier': "The factor used by the Update Food Cost action to change food cost"
+        }
+    }
+```
+
+Few observations:
+* We typically hide parameters that we don't want end-users
+  to see or manipulate. We call these *advanced parameters*,
+  because even though they are not visible in the Parameters
+  window, consultants can still change their values via the
+  `parameters` table (note that it's possible to upload
+  a `parameters` table even if it's hidden!).
+* The order in which parameters are listed within each category
+  is the order in which they will be displayed in the app.
+* The order in which parameters categories are defined in the
+  `categories` dictionary is the order in which they will 
+  be displayed in the app.
+* Parameters that are not hidden and are not part of any category
+  can also be ordered using the 'order' list.
+* It's okay to have a mix of categorized and uncategorized 
+  parameters. Parameters that are not assigned to any category are 
+  placed on the upper part of the Parameters window, before any
+  category.
+* Display names of parameters are the exact names defined in
+  the ticdat schema.
+
 ### Tables config
-Here is the template dictionary that you must use to configure input tables.
+Here is the template dictionary that you can use to configure input tables.
 ```python
 input_tables_config = {
     'hidden_tables': list(),
@@ -117,53 +168,72 @@ output_tables_config = {
     }
 ```
 
-### Parameters config
-Just like tables, parameters can also be hidden, categorized, and ordered. 
-In addition, parameters can have a tooltip, as actions have.
+### Pivot Tables config
+These configurations allow us to pre-define one pivot table for each table in 
+the schema (input and output). The user of the app can then download the 
+table along with this pivot table as an `xls` or `xlsx` file from the table 
+options menu. This functionality provides the user with a convenient way to 
+analyze a summary of the data in each table. 
 
-Here is the template dictionary for parameters:
-```python
-parameters_config = {
-    'hidden': list(),
-    'categories': dict(),
-    'order': list(),
-    'tooltips': dict()
-    }
-```
+On LibreOffice (similarly on Excel), pivot tables can be built by 
+dragging and dropping column names from the "Available Fields" into the 
+appropriate boxes:  
+![pivot_table_config](pivot_table_config.png)
 
-And here is how we can populate it for the `mip_me` package:
+To define a pivot table with code, we use the following template dictionary:
 ```python
-parameters_config = {
-    'hidden': list(),
-    'categories': dict(),
-    'order': ['Food Portions', 'Food Cost Multiplier'],
-    'tooltips': {
-        'Food Portions': "Whether fractional portions may compose the diet or only whole portions must be used",
-        'Food Cost Multiplier': "The factor used by the Update Food Cost action to change food cost"
+input_pivot_tables_config = {
+    'Pivot Table Display Name': {
+        'table': 'table_name',
+        'row_fields': list(),
+        'column_fields': list(),
+        'data_fields': 
+            {'Result Column Name 1': 
+                {'column': 'Field Name 1', 'operation':'sum'}, 
+             'Result Column Name 2': 
+                {'column': 'Field Name 2', 'operation':'count'}
+             }
         }
     }
 ```
+The value for 'operation' can be any of 'sum', 'count', 'average',  'max', 
+'min, or 'count'.
 
-Few observations:
-* We typically hide parameters that we don't want end-users
-  to see or manipulate. We call these *advanced parameters*,
-  because even though they are not visible in the Parameters
-  window, consultants can still change their values via the
-  `parameters` table (note that it's possible to upload
-  a `parameters` table even if it's hidden!).
-* The order in which parameters are listed within each category
-  is the order in which they will be displayed in the app.
-* The order in which parameters categories are defined in the
-  `categories` dictionary is the order in which they will 
-  be displayed in the app.
-* Parameters that are not hidden and are not part of any category
-  can also be ordered using the 'order' list.
-* It's okay to have a mix of categorized and uncategorized 
-  parameters. Parameters that are not assigned to any category are 
-  placed on the upper part of the Parameters window, before any
-  category.
-* Display names of parameters are the exact names defined in
-  the ticdat schema.
+And here is how we can populate it to get a pivot table for the 
+`foods_nutrients` of the `mip_me` package:
+```python
+input_pivot_tables_config = {
+    'Foods-Nutrients Summary': {
+        'table': 'foods_nutrients',
+        'row_fields': ['Food ID'],
+        'column_fields': ['Nutrient ID'],
+        'data_fields': 
+          {'Total Nutrient Qty.': 
+              {'column': 'Quantity', 'operation': 'sum'}
+           }
+        }
+    }
+```
+This is how the pivot table would look like in this case:  
+![pivot_table_foods_nutrients](pivot_table_foods_nutrients.png)
+
+Output pivot tables are defined using the exact same template, just the name of 
+the dictionary changes:
+```python
+output_pivot_tables_config = {
+    'Pivot Table Display Name': {
+        'table': 'table_name',
+        'row_fields': list(),
+        'column_fields': list(),
+        'data_fields': 
+            {'Result Column Name 1': 
+                {'column': 'Field Name 1', 'operation':'sum'}, 
+             'Result Column Name 2': 
+                {'column': 'Field Name 2', 'operation':'count'}
+             }
+        }
+    }
+```
 
 ## Deploying the customized app
 Here is what the `__init__.py` module of the customized version of the 
